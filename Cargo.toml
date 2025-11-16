@@ -1,0 +1,27 @@
+[package]
+name = "dz6"
+version = "0.2.0"
+edition = "2024"
+description = "vim-like hexadecimal editor"
+readme = "README.md"
+homepage = "https://menteb.in/dz6"
+repository = "https://github.com/mentebinaria/dz6"
+license = "GPL-3.0-or-later"
+keywords = ["hex-editor", "reverse-engineering", "binary", "pe", "elf"]
+categories = ["command-line-utilities", "security"]
+
+
+[dependencies]
+clap = { version = "4.5.49", features = ["derive"] }
+crossterm = "0.29.0"
+encoding_rs = "0.8.35"
+evalexpr = "12.0.2"
+hex = "0.4.3"
+ratatui = "0.29.0"
+regex = "1.11.2"
+tui-input = "*"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
