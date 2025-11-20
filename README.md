@@ -169,6 +169,10 @@ iTerm2 users: go to `Settings → Profiles → (your profile) → Keys` and set 
 
 No. Some key bindings behave similarly, but dz6 is not meant to be 100% compatible with vim. For example, `o` in dz6 moves to the next other byte, while the same key in vim opens a new line below the current one.
 
+**3. Is dz6 stable yet**
+
+No. Stability is expected only when we release v1.0.0. Until then, things **will** certainly change.
+
 ## Motivation
 
 After changing jobs and returning to Linux, I wanted something similar to [Hiew](https://hiew.io) that I could run on my machine. Since I like vim, I tried to combine features from both editors in dz6. VSCode, IDA, x64dbg, and [Hex-Patch](https://etto48.github.io/HexPatch/) also served as inspiration. Hats off to the authors of these great tools!
