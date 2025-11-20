@@ -127,7 +127,6 @@ pub struct App {
     pub command_area: Rect,
     pub command_input: Input,
     pub config: Config,
-    pub dialog_renderer: Option<fn(&mut App, &mut Frame)>,
     pub dialog_2nd_renderer: Option<fn(&mut App, &mut Frame)>,
     pub dialog_renderer: Option<fn(&mut App, &mut Frame)>,
     pub editor_view: AppView,
@@ -142,11 +141,6 @@ pub struct App {
     pub string_regex: String,
     pub strings: Vec<FoundString>,
     pub text_view: TextView,
-    pub logs: Vec<String>,
-    pub log_scroll_offset: (u16, u16),
-    pub goto_input: Input,
-    pub calculator: Calculator,
-    pub command_bar_area: Rect,
 }
 
 impl App {
@@ -174,8 +168,6 @@ impl App {
                 highlihts: HashSet::with_capacity(8),
                 ..Default::default()
             },
-            logs: Vec::with_capacity(100),
-            log_scroll_offset: (0, 0),
             list_state: ListState::default(),
             log_scroll_offset: (0, 0),
             logs: Vec::with_capacity(100),
@@ -190,9 +182,6 @@ impl App {
                 scroll_offset: (0, 0),
                 table: encoding_rs::UTF_8,
             },
-            goto_input: Input::default(),
-            calculator: Calculator::default(),
-            command_bar_area: Rect::default(),
         }
     }
 
@@ -207,7 +196,7 @@ impl App {
     }
 
     /// load a file
-    pub fn load_file(&mut self, filepath: &str, initial_offset: usize) -> io::Result<()> {
+    pub fn load_file(&mut self, filepath: &str, initial_offset: usize, read_only: bool) -> io::Result<()> {
         let path = Path::new(&filepath);
 
         if let Some(f) = path.file_name()
@@ -220,7 +209,7 @@ impl App {
         let meta = path.metadata()?;
 
         // try to open the file with write permissions. Fallback to read-only otherise.
-        if let Ok(file) = OpenOptions::new().read(true).write(true).open(path) {
+        if !read_only && let Ok(file) = OpenOptions::new().read(true).write(true).open(path) {
             self.file_info.file = Some(file);
         } else {
             let file = OpenOptions::new().read(true).open(path)?;
@@ -249,7 +238,7 @@ impl App {
 
     pub fn reload_file(&mut self) {
         let fp = self.file_info.path.clone();
-        self.load_file(&fp, self.hex_view.offset)
+        self.load_file(&fp, self.hex_view.offset, self.file_info.is_read_only)
             .expect("could not reload the file");
     }
 
@@ -410,19 +399,19 @@ impl App {
     pub fn read_chunk_for_offset(&mut self, offset: usize) {
         let nblock = offset / APP_CACHE_SIZE;
 
-        if offset > self.reader.cache_offset_last {
+        if offset > self.reader.cache_end {
             self.read_chunk_from_file(nblock).unwrap();
-            self.reader.cache_offset_first += nblock * APP_CACHE_SIZE;
-            self.reader.cache_offset_last += nblock * APP_CACHE_SIZE;
-        } else if offset < self.reader.cache_offset_first {
+            self.reader.cache_start += nblock * APP_CACHE_SIZE;
+            self.reader.cache_end += nblock * APP_CACHE_SIZE;
+        } else if offset < self.reader.cache_start {
             self.read_chunk_from_file(nblock).unwrap();
-            self.reader.cache_offset_first -= APP_CACHE_SIZE;
-            self.reader.cache_offset_last -= APP_CACHE_SIZE;
+            self.reader.cache_start -= APP_CACHE_SIZE;
+            self.reader.cache_end -= APP_CACHE_SIZE;
         } else if offset == 0 {
-            self.reader.cache_offset_first = 0;
-            self.reader.cache_offset_last = APP_CACHE_SIZE - 1;
-            self.reader.page_offset_first = 0;
-            self.reader.page_offset_last = APP_PAGE_SIZE - 1;
+            self.reader.cache_start = 0;
+            self.reader.cache_end = APP_CACHE_SIZE - 1;
+            self.reader.page_start = 0;
+            self.reader.page_end = APP_PAGE_SIZE - 1;
         }
     }
 }

@@ -10,7 +10,7 @@ use crate::{app::App, config::APP_PAGE_SIZE, editor::UIState};
 pub fn draw_hex_offsets(app: &mut App, frame: &mut Frame, area: Rect) {
     // Offset lines
     let mut rows: Vec<Row> = Vec::with_capacity(APP_PAGE_SIZE / 16);
-    let mut ofs = app.reader.page_offset_first;
+    let mut ofs = app.reader.page_start;
     let num_offsets = app
         .reader
         .page_current_size
@@ -51,7 +51,7 @@ pub fn draw_hex_contents(app: &mut App, frame: &mut Frame, area: Rect) {
         // we need the absolute offset of this byte to check
         // whether there's a new value for it in the hashmap
         // if yes, we draw the new one and style it
-        let offset = i + app.reader.page_offset_first;
+        let offset = i + app.reader.page_start;
 
         let mut byte_content = format!("{byte:02X}");
         byte_style = if app.hex_view.highlihts.contains(byte) {
@@ -154,7 +154,7 @@ pub fn draw_hex_ascii(app: &mut App, frame: &mut Frame, area: Rect) {
 
         // O conteúdo e o estilo da célula agora vai depender se
         // o offset atual está no hashmap de bytes alterados
-        let offset = i + app.reader.page_offset_first;
+        let offset = i + app.reader.page_start;
         let cell = if app.hex_view.changed_bytes.contains_key(&offset) {
             // Define o estilo
             char_style = app.config.theme.changed_bytes;
