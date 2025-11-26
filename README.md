@@ -2,7 +2,7 @@
 
 # dz6
 
-vim-like hexadecimal editor
+A vim-inspired, TUI-based hexadecimal editor
 
 ## Features
 
@@ -13,7 +13,7 @@ vim-like hexadecimal editor
 * String list with regex filtering
 * Multiple smart ways to navigate through a file
 * Find strings and hex bytes
-* Multiplatform
+* Cross-platform
 * Open source
 
 ## Screenshot
@@ -22,7 +22,7 @@ vim-like hexadecimal editor
 
 ## Download
 
-You can install **dz6** with Cargo using the Rust package manager. Follow the instructions [here](https://rust-lang.org/tools/install/) to install **cargo**. Then, use
+You can install **dz6** with the Rust package manager. Follow the instructions [here](https://rust-lang.org/tools/install/) to install **cargo**. Then, use
 
     cargo install dz6
 
@@ -56,10 +56,10 @@ Once you load a file in **dz6**, you can use the commands below.
 
 #### Commands
 
-| Command   | Action       | Tips |
-| ---       | ---          | ---    |
-| <number>  | Go to offset | hex default; `t` suffix = decimal; `+` prefix = incremental jump |
-| q         | Quit         | |
+| Command         | Action       | Tips |
+| ---             | ---          | ---    |
+| &lt;number&gt;  | Go to offset | hex default; `t` suffix = decimal; `+` prefix = incremental jump |
+| q               | Quit         | |
 
 ### Hex view
 
@@ -153,7 +153,7 @@ Use the up and down arrow keys to navigate through the history.
 
 ### Text view
 
-> This view hasn’t received much attention yet. Things are still pretty broken there.
+> This view hasn’t received much attention yet. This view still has several issues.
 
 | Key                | Action |
 | ---                | ---    |
@@ -171,7 +171,7 @@ No. Some key bindings behave similarly, but dz6 is not meant to be 100% compatib
 
 **3. Is dz6 stable yet**
 
-No. Stability is expected only when we release v1.0.0. Until then, things **will** certainly change.
+No. Stability is expected only at v1.0.0. Until then, breaking changes are expected.
 
 ## Motivation
 
