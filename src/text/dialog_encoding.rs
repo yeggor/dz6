@@ -46,11 +46,19 @@ pub fn dialog_encoding_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             app.state = UIState::Normal;
             app.dialog_renderer = None;
         }
-        KeyCode::Down => {
-            app.list_state.select_next();
+        KeyCode::Down | KeyCode::Char('j') => {
+            if app.list_state.selected() == Some(4) {
+                app.list_state.select_first();
+            } else {
+                app.list_state.select_next();
+            }
         }
-        KeyCode::Up => {
-            app.list_state.select_previous();
+        KeyCode::Up | KeyCode::Char('k') => {
+            if app.list_state.selected() == Some(0) {
+                app.list_state.select_last();
+            } else {
+                app.list_state.select_previous();
+            }
         }
         KeyCode::PageUp | KeyCode::Home => {
             app.list_state.select_first();
