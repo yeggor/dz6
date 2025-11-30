@@ -48,26 +48,25 @@ Once you load a file in **dz6**, you can use the commands below.
 
 ### Global key bindings
 
-| Key     | Action           |
+| Key     | Action           | Tips                      |
 | ------- | ---------------- | ------------------------- |
-| `Enter` | Switch views     |
-| `F1`    | Help             |
-| `Alt+l` | Open log window  |
+| `Enter` | Switch views     | Currently Hex and Text    |
+| `Alt+l` | Open log window  |                           |
 | `:`     | Open command bar | See [Commands](#commands) |
 
 #### Commands
 
 | Command        | Action                                                           | Parameters             | Tips/Examples                                                    |
 | -------------- | ---------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------- |
-| &lt;number&gt; | Go to offset                                                     |                        | hex default; `t` suffix = decimal; `+` prefix = incremental jump |
-| cmt            | Comment                                                          | `<offset>` `<comment>` | `cmt 1000 "my comment"` (offset obeys the same rules above)      |
-| set byteline   | Set the number of bytes per line                                 | `<number>`             | `set byteline 8` (default is 16; range from 1 to 48)             |
-| set ctrlchar   | Set the character shown in the ASCII dump for non-graphic values | `<char>`               | `set ctrlchar " "` would set a blankspace (default: `.`)         |
-| set dimzero    | Dim (gray out) null bytes only (default)                         |                        |                                                                  |
-| set dimctrl    | Dim all control characters                                       |                        | all non-graphic characters will be dimmed                        |
-| set nodim      | Turn off byte dimming                                            |                        |                                                                  |
-| set theme      | Set the theme                                                    | `dark` or `light`      | `set theme light` (default: `dark`)                              |
-| q              | Quit                                                             |                        |                                                                  |
+| `<number`      | Go to offset                                                     |                        | hex default; `t` suffix = decimal; `+` prefix = incremental jump |
+| `cmt`          | Comment                                                          | `<offset>` `<comment>` | `cmt 1000 "my comment"` (offset obeys the same rules above)      |
+| `set byteline` | Set the number of bytes per line                                 | `<number>`             | `set byteline 8` (default is 16; range from 1 to 48)             |
+| `set ctrlchar` | Set the character shown in the ASCII dump for non-graphic values | `<char>`               | `set ctrlchar " "` would set a blankspace (default: `.`)         |
+| `set dimzero`  | Dim (gray out) null bytes only (default)                         |                        |                                                                  |
+| `set dimctrl`  | Dim all control characters                                       |                        | all non-graphic characters will be dimmed                        |
+| `set nodim`    | Turn off byte dimming                                            |                        |                                                                  |
+| `set theme`    | Set the theme                                                    | `dark` or `light`      | `set theme light` (default: `dark`)                              |
+| `q`            | Quit                                                             |                        |                                                                  |
 
 ### Hex view
 
@@ -102,17 +101,17 @@ Once you load a file in **dz6**, you can use the commands below.
 
 #### Hex replace mode
 
-| Key         | Action                                                     | Tips                                  |
-| ----------- | ---------------------------------------------------------- | ------------------------------------- |
-| Arrow keys  | Navigation                                                 | vim-like `h`, `j`, `k`, `l` also work |
-| `Backspace` | The same as navigating left                                |                                       |
-| `z`         | Set the byte to zero                                       |                                       |
-| `Ctrl+a`    | Increment byte                                             |                                       |
-| `Ctrl+x`    | Decrement byte                                             |                                       |
-| `Enter`     | Save changes to file                                       |                                       |
-| `Esc`       | Cancel changes                                             |                                       |
-| `Tab`       | Cycle through hex and ASCII dump to edit the file in ASCII |                                       |
-| `T`         | Truncate the file at the selected offset                   | Be aware this can't be undone         |
+| Key         | Action                                                     | Tips                          |
+| ----------- | ---------------------------------------------------------- | ----------------------------- |
+| Arrow keys  | Navigation                                                 |                               |
+| `Backspace` | The same as navigating left                                |                               |
+| `z`         | Set the byte to zero                                       |                               |
+| `Ctrl+a`    | Increment byte                                             |                               |
+| `Ctrl+x`    | Decrement byte                                             |                               |
+| `Enter`     | Save changes to file                                       |                               |
+| `Esc`       | Cancel changes                                             |                               |
+| `Tab`       | Cycle through hex and ASCII dump to edit the file in ASCII |                               |
+| `T`         | Truncate the file at the selected offset                   | Be aware this can't be undone |
 
 #### Names
 
@@ -177,7 +176,7 @@ iTerm2 users: go to `Settings → Profiles → (your profile) → Keys` and set 
 
 No. Some key bindings behave similarly, but dz6 is not meant to be 100% compatible with vim. For example, `o` in dz6 moves to the next other byte, while the same key in vim opens a new line below the current one.
 
-**3. Is dz6 stable yet**
+**3. Is dz6 stable yet?**
 
 No. Stability is expected only at v1.0.0. Until then, breaking changes are expected.
 
