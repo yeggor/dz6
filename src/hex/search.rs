@@ -1,5 +1,5 @@
 use crate::app::SearchMode;
-use crate::widgets::ErrorMessage;
+use crate::widgets::{Message, MessageType};
 use crate::{app::App, config::APP_CACHE_SIZE, editor::UIState};
 use ratatui::Frame;
 use ratatui::crossterm::event::{Event, KeyCode};
@@ -141,7 +141,7 @@ pub fn dialog_search_events(app: &mut App, event: &Event) -> Result<bool> {
 }
 
 pub fn dialog_search_error_draw(app: &mut App, frame: &mut Frame) {
-    let mut dialog = ErrorMessage::new();
-    dialog.buffer = String::from("Pattern not found");
+    let mut dialog = Message::from("Pattern not found");
+    dialog.kind = MessageType::Error;
     dialog.render(app, frame);
 }

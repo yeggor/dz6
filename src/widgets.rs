@@ -6,20 +6,33 @@ use ratatui::{
 use crate::app::App;
 use crate::util::center_widget;
 
-pub struct ErrorMessage {
-    pub buffer: String,
+#[derive(PartialEq)]
+pub enum MessageType {
+    Error,
+    Info,
 }
 
-impl ErrorMessage {
-    pub fn new() -> Self {
+pub struct Message {
+    pub buffer: String,
+    pub kind: MessageType,
+}
+
+impl Message {
+    pub fn from(message: &str) -> Self {
         Self {
-            buffer: String::with_capacity(100),
+            buffer: message.to_string(),
+            kind: MessageType::Info,
         }
     }
 
     pub fn render(&mut self, app: &mut App, frame: &mut Frame) {
         let text = self.buffer.clone();
-        let paragraph = Paragraph::new(text).style(app.config.theme.error);
+        let style = if self.kind == MessageType::Error {
+            app.config.theme.error
+        } else {
+            app.config.theme.main
+        };
+        let paragraph = Paragraph::new(text).style(style);
 
         frame.render_widget(Clear, app.command_area);
         frame.render_widget(paragraph, app.command_area);
