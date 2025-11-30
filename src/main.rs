@@ -7,6 +7,7 @@ mod events;
 mod global;
 mod hex;
 mod reader;
+mod ruler;
 mod text;
 mod themes;
 mod util;

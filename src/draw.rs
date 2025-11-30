@@ -5,7 +5,7 @@ use crate::{
     editor::AppView,
     global,
     hex::{self, comment},
-    text,
+    ruler, text,
 };
 
 /// This is the main drawing/rendering function that
@@ -36,7 +36,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
                 .split(frame.area());
 
             // Draw ruler at the top
-            global::ruler::ruler_draw(app, frame, vertical_layout[0]);
+            ruler::ruler_draw(app, frame, vertical_layout[0]);
 
             // Draw status bar at the bottom
             global::status_bar::status_bar_draw(app, frame, vertical_layout[2]);
