@@ -2,8 +2,35 @@ use ratatui::crossterm::event::{KeyCode, KeyEvent};
 use std::io::Result;
 
 use crate::app::App;
-use crate::app::Direction;
 use crate::editor::UIState;
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Direction {
+    Left,
+    Right,
+}
+
+#[derive(Default, Debug, Clone, Copy)]
+pub struct Selection {
+    pub start: usize,
+    pub end: usize,
+    pub direction: Option<Direction>,
+}
+
+impl IntoIterator for Selection {
+    type Item = usize;
+    type IntoIter = std::ops::RangeInclusive<usize>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.start..=self.end
+    }
+}
+
+impl Selection {
+    pub fn contains(&self, offset: usize) -> bool {
+        offset >= self.start && offset <= self.end
+    }
+}
 
 pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
     match key.code {

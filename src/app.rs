@@ -6,17 +6,16 @@ use std::{
 };
 
 use arboard::Clipboard;
-use evalexpr::HashMapContext;
 use ratatui::{
     Frame,
     layout::Rect,
-    widgets::{ListState, TableState},
+    widgets::ListState,
 };
-
-use serde::{Deserialize, Serialize};
 use tui_input::Input;
 
-use crate::{config::*, editor::*, reader::Reader, themes::*};
+use crate::{
+    config::*, editor::*, global::calculator::Calculator, hex::{hex_view::HexView, strings::FoundString}, reader::Reader, themes::*
+};
 
 #[derive(Default)]
 pub struct FileInfo {
@@ -28,142 +27,12 @@ pub struct FileInfo {
     pub size: usize,
 }
 
-// used in HexMode struct to track the cursor position
-#[derive(Default, Debug)]
-pub struct Point {
-    pub x: usize,
-    pub y: usize,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum Direction {
-    Left,
-    Right,
-}
-
-#[derive(Default, Debug, Clone, Copy)]
-pub struct Selection {
-    pub start: usize,
-    pub end: usize,
-    pub direction: Option<Direction>,
-}
-
-impl IntoIterator for Selection {
-    type Item = usize;
-    type IntoIter = std::ops::RangeInclusive<usize>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.start..=self.end
-    }
-}
-
-impl Selection {
-    pub fn contains(&self, offset: usize) -> bool {
-        offset >= self.start && offset <= self.end
-    }
-}
-
-#[derive(Default, Debug, Serialize, Deserialize)]
-pub struct HexView {
-    #[serde(skip)]
-    pub ascii_state: TableState,
-    pub bookmarks: Vec<usize>,
-    #[serde(skip)]
-    pub changed_bytes: HashMap<usize, String>,
-    #[serde(skip)]
-    pub comment_input: Input, // the input comment widget (tui-input)
-
-    // `comment_name_list` is used to show comments in Names list
-    // and also on the conversion from selected item on the list
-    // to file offset passed to goto()
-    pub comment_name_list: Vec<Comment>,
-
-    // `comments` store the comments internally as it is much easier
-    // to handle that with a hash map
-    pub comments: HashMap<usize, String>,
-
-    #[serde(skip)]
-    pub cursor: Point,
-    #[serde(skip)]
-    pub editing_hex: bool,
-    pub highlihts: HashSet<u8>, // byte highlight
-    #[serde(skip)]
-    pub last_visited_offset: usize,
-    #[serde(skip)]
-    pub names_list_state: ListState,
-    #[serde(skip)]
-    pub names_regex_input: Input,
-    pub names_regex: String,
-    #[serde(skip)]
-    pub offset_state: TableState,
-    #[serde(skip)]
-    pub offset: usize,
-    #[serde(skip)]
-    pub search: Search,
-    #[serde(skip)]
-    pub selection: Selection,
-    #[serde(skip)]
-    pub strings_regex_input: Input,
-    #[serde(skip)]
-    pub table_state: TableState,
-}
-
-#[derive(Default, Debug)]
-pub struct Search {
-    pub input_text: Input,
-    pub mode: SearchMode,
-    pub input_hex: Input,
-}
-
-#[derive(Default, Debug, PartialEq)]
-pub enum SearchMode {
-    #[default]
-    Utf8,
-    // UTF_16,
-    // UTF_16_LE,
-    Hex,
-}
-
-impl SearchMode {
-    pub fn next(&mut self) {
-        if *self == SearchMode::Utf8 {
-            *self = SearchMode::Hex;
-        } else {
-            *self = SearchMode::Utf8
-        }
-    }
-}
-
 #[derive(Debug)]
 pub struct TextView {
     pub area_height: u16,
     pub lines_to_show: usize,
     pub scroll_offset: (u16, u16), // order is (y, x)
     pub table: &'static encoding_rs::Encoding,
-}
-
-pub struct FoundString {
-    pub offset: usize,
-    pub content: String,
-    pub size: usize,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Comment {
-    pub offset: usize,
-    pub comment: String,
-}
-
-#[derive(Default)]
-pub struct Calculator {
-    pub input: Input,
-    pub context: HashMapContext,
-    pub history: Vec<String>,
-    pub history_index: Option<usize>,
-    // history_set is a HashSet to avoid duplicates, although users
-    // can bypass that with something like "1+1" != "1 + 1"
-    pub history_set: HashSet<String>,
-    pub result: i64,
 }
 
 pub struct App {

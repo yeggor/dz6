@@ -4,10 +4,7 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use crate::{
-    app::{App, SearchMode},
-    editor::UIState,
-};
+use crate::{app::App, editor::UIState, hex::search::SearchMode};
 
 pub fn status_bar_draw(app: &mut App, frame: &mut Frame, area: Rect) {
     // Bookmarks

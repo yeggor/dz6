@@ -1,11 +1,37 @@
-use crate::app::SearchMode;
 use crate::widgets::{Message, MessageType};
 use crate::{app::App, config::APP_CACHE_SIZE, editor::UIState};
 use ratatui::Frame;
 use ratatui::crossterm::event::{Event, KeyCode};
 use ratatui::widgets::Paragraph;
 use std::io::Result;
+use tui_input::Input;
 use tui_input::backend::crossterm::EventHandler;
+
+#[derive(Default, Debug)]
+pub struct Search {
+    pub input_text: Input,
+    pub mode: SearchMode,
+    pub input_hex: Input,
+}
+
+#[derive(Default, Debug, PartialEq)]
+pub enum SearchMode {
+    #[default]
+    Utf8,
+    // UTF_16,
+    // UTF_16_LE,
+    Hex,
+}
+
+impl SearchMode {
+    pub fn next(&mut self) {
+        if *self == SearchMode::Utf8 {
+            *self = SearchMode::Hex;
+        } else {
+            *self = SearchMode::Utf8
+        }
+    }
+}
 
 pub fn hex_string_to_u8(hex_string: &str) -> Option<Vec<u8>> {
     if hex_string.is_empty() || !hex_string.len().is_multiple_of(2) {

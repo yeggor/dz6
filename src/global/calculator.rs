@@ -1,7 +1,8 @@
 use crate::{
-    app::{App, Calculator},
+    app::App,
     util::center_widget,
 };
+
 use ratatui::{
     Frame,
     layout::Rect,
@@ -12,10 +13,22 @@ use ratatui::{
 use crate::editor::UIState;
 
 use ratatui::crossterm::event::{Event, KeyCode};
-use std::io::Result;
+use std::{collections::HashSet, io::Result};
 use tui_input::{Input, backend::crossterm::EventHandler};
 
 use evalexpr::*;
+
+#[derive(Default)]
+pub struct Calculator {
+    pub input: Input,
+    pub context: HashMapContext,
+    pub history: Vec<String>,
+    pub history_index: Option<usize>,
+    // history_set is a HashSet to avoid duplicates, although users
+    // can bypass that with something like "1+1" != "1 + 1"
+    pub history_set: HashSet<String>,
+    pub result: i64,
+}
 
 impl Calculator {
     pub fn push_history(&mut self, entry: String) {

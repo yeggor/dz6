@@ -11,14 +11,16 @@ use tui_input::backend::crossterm::EventHandler;
 use std::io::Result;
 
 use crate::{
-    app::{App, FoundString},
-    commands::Commands,
-    config::APP_CACHE_SIZE,
-    editor::UIState,
-    util::center_widget,
+    app::App, commands::Commands, config::APP_CACHE_SIZE, editor::UIState, util::center_widget,
 };
 
 use regex::{Regex, RegexBuilder};
+
+pub struct FoundString {
+    pub offset: usize,
+    pub content: String,
+    pub size: usize,
+}
 
 pub fn dialog_strings_draw(app: &mut App, frame: &mut Frame) {
     let mut items = Vec::new();

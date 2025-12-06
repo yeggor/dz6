@@ -1,10 +1,4 @@
-use crate::{
-    app::{App, SearchMode},
-    commands::Commands,
-    config::APP_PAGE_SIZE,
-    editor::UIState,
-    hex::{self, search::hex_string_to_u8},
-};
+use crate::{app::App, commands::Commands, config::APP_PAGE_SIZE, editor::UIState, hex};
 
 use ratatui::crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use std::io::Result;
@@ -260,19 +254,19 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 // search next
                 let mut ofs = None;
                 if app.state == UIState::Normal {
-                    if app.hex_view.search.mode == SearchMode::Utf8
+                    if app.hex_view.search.mode == hex::search::SearchMode::Utf8
                         && !app.hex_view.search.input_text.value().is_empty()
                     {
                         ofs = crate::hex::search::search(
                             app,
                             &app.hex_view.search.input_text.value().to_string(),
                         )
-                    } else if app.hex_view.search.mode == SearchMode::Hex
+                    } else if app.hex_view.search.mode == hex::search::SearchMode::Hex
                         && !app.hex_view.search.input_hex.value().is_empty()
                     {
                         let hex_string = app.hex_view.search.input_hex.value().to_string();
 
-                        if let Some(by) = hex_string_to_u8(&hex_string) {
+                        if let Some(by) = hex::search::hex_string_to_u8(&hex_string) {
                             ofs = crate::hex::search::search(app, &by)
                         }
                     }

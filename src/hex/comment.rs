@@ -4,15 +4,22 @@ use ratatui::{
 };
 
 use ratatui::crossterm::event::{Event, KeyCode};
+use serde::{Deserialize, Serialize};
 use std::io::Result;
 
 use tui_input::backend::crossterm::EventHandler;
 
 use crate::{
-    app::{App, Comment},
+    app::{App},
     commands::Commands,
     editor::UIState,
 };
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Comment {
+    pub offset: usize,
+    pub comment: String,
+}
 
 pub fn dialog_comment_draw(app: &mut App, frame: &mut Frame) {
     let para = Paragraph::new(format!(";{}", app.hex_view.comment_input.value()));

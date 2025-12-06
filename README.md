@@ -89,7 +89,7 @@ Once you load a file in **dz6**, you can use the commands below.
 | `z`                     | Enter replace mode and set the byte under the cursor zero                          |                                                                   |
 | `Ctrl+a`                | Enter replace mode and increment byte under the cursor                             |                                                                   |
 | `Ctrl+x`                | Enter replace mode and decrement byte under the cursor                             |                                                                   |
-| `v`                     | Enter selection mode(#hex-selection-mode)                                          |                                                                   |
+| `v`                     | Enter [selection mode](#hex-selection-mode)                                        |                                                                   |
 | `/`                     | Search                                                                             | Search the entire file. `Tab` cycles between ASCII and hex search |
 | `n`                     | Search next                                                                        |                                                                   |
 | `s`                     | Open [Strings](#strings) window                                                    |                                                                   |
