@@ -12,6 +12,7 @@ use ratatui::{
     widgets::{ListState, TableState},
 };
 
+use serde::{Deserialize, Serialize};
 use tui_input::Input;
 
 use crate::{config::*, editor::*, reader::Reader, themes::*};
@@ -27,13 +28,13 @@ pub struct FileInfo {
 }
 
 // used in HexMode struct to track the cursor position
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Point {
     pub x: usize,
     pub y: usize,
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct HexView {
     pub ascii_state: TableState,
     pub bookmarks: Vec<usize>,
@@ -63,14 +64,14 @@ pub struct HexView {
     pub table_state: TableState,
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Search {
     pub input_text: Input,
     pub mode: SearchMode,
     pub input_hex: Input,
 }
 
-#[derive(Default, Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
 pub enum SearchMode {
     #[default]
     Utf8,
@@ -103,7 +104,7 @@ pub struct FoundString {
     pub size: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Comment {
     pub offset: usize,
     pub comment: String,
@@ -157,6 +158,7 @@ impl App {
                 hex_mode_non_graphic_char: '.',
                 maximum_strings_to_show: 3000,
                 minimum_string_length: 4,
+                database: true,
                 theme: DARK,
                 // hex_mode_dword_separator: '-',
                 // text_mode_tab_spaces: 4,
@@ -240,6 +242,11 @@ impl App {
             self.goto(0);
         }
         self.goto(initial_offset);
+
+        // try to load a database for this file, but continue otherwise
+        if self.config.database {
+            let _ = self.load_database();
+        }
         Ok(())
     }
 

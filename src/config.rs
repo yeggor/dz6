@@ -13,6 +13,7 @@ pub struct Config {
     pub hex_mode_non_graphic_char: char,
     pub maximum_strings_to_show: usize,
     pub minimum_string_length: usize,
+    pub database: bool,
     pub theme: Theme,
     // pub hex_mode_dword_separator: char,
     // pub text_mode_tab_spaces: usize,

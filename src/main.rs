@@ -1,6 +1,7 @@
 mod app;
 mod commands;
 mod config;
+mod database;
 mod draw;
 mod editor;
 mod events;

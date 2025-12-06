@@ -22,3 +22,6 @@ target
 
 *.log
 *.DS_Store
+
+# dz6 database files
+*.dz6
