@@ -68,10 +68,10 @@ pub fn dialog_strings_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             app.dialog_renderer = None;
             app.state = UIState::Normal;
         }
-        KeyCode::Down => {
+        KeyCode::Down | KeyCode::Char('j') => {
             app.list_state.select_next();
         }
-        KeyCode::Up => {
+        KeyCode::Up | KeyCode::Char('k') => {
             app.list_state.select_previous();
         }
         KeyCode::PageDown => {
