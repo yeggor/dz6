@@ -50,10 +50,10 @@ pub fn dialog_names_events(app: &mut App, event: &Event) -> Result<bool> {
                 app.dialog_renderer = None;
                 app.state = UIState::Normal;
             }
-            KeyCode::Down => {
+            KeyCode::Down | KeyCode::Char('j') => {
                 app.hex_view.names_list_state.select_next();
             }
-            KeyCode::Up => {
+            KeyCode::Up | KeyCode::Char('k') => {
                 app.hex_view.names_list_state.select_previous();
             }
             KeyCode::PageDown => {
