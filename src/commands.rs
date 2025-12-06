@@ -116,15 +116,6 @@ fn parse_command(app: &mut App, cmdline: &str) {
                     }
                     app.dialog_renderer = None;
                 }
-                // save database files <filename>.dz6
-                "db" => {
-                    app.config.database = true;
-                    app.dialog_renderer = None;
-                }
-                "nodb" => {
-                    app.config.database = false;
-                    app.dialog_renderer = None;
-                }
                 // control / non-graphic bytes
                 "ctrlchar" => {
                     if let Some(val) = value
@@ -133,6 +124,15 @@ fn parse_command(app: &mut App, cmdline: &str) {
                         let c = val.chars().next().unwrap_or('.');
                         app.config.hex_mode_non_graphic_char = c;
                     }
+                    app.dialog_renderer = None;
+                }
+                // save database files <filename>.dz6
+                "db" => {
+                    app.config.database = true;
+                    app.dialog_renderer = None;
+                }
+                "nodb" => {
+                    app.config.database = false;
                     app.dialog_renderer = None;
                 }
                 // dim (gray out) control bytes
