@@ -20,9 +20,9 @@ use crate::{
 #[derive(Default)]
 pub struct FileInfo {
     pub file: Option<File>,
+    pub path: String,
     pub is_read_only: bool,
     pub name: String,
-    pub path: String,
     pub r#type: &'static str,
     pub size: usize,
 }
@@ -84,7 +84,7 @@ impl App {
             file_info: FileInfo::default(),
             hex_view: HexView {
                 editing_hex: true,
-                highlihts: HashSet::with_capacity(8),
+                highlights: HashSet::with_capacity(8),
                 ..Default::default()
             },
             list_state: ListState::default(),

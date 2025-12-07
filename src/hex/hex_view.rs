@@ -36,13 +36,15 @@ pub struct HexView {
     pub cursor: Point,
     #[serde(skip)]
     pub editing_hex: bool,
-    pub highlihts: HashSet<u8>, // byte highlight
+    #[serde(skip)]
+    pub highlights: HashSet<u8>, // byte highlight
     #[serde(skip)]
     pub last_visited_offset: usize,
     #[serde(skip)]
     pub names_list_state: ListState,
     #[serde(skip)]
     pub names_regex_input: Input,
+    #[serde(skip)]
     pub names_regex: String,
     #[serde(skip)]
     pub offset_state: TableState,

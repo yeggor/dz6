@@ -45,10 +45,10 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
         KeyCode::Char('h') => {
             if key.modifiers.contains(KeyModifiers::ALT) {
                 if let Some(b) = app.read_u8(app.hex_view.offset) {
-                    if app.hex_view.highlihts.contains(&b) {
-                        app.hex_view.highlihts.remove(&b);
+                    if app.hex_view.highlights.contains(&b) {
+                        app.hex_view.highlights.remove(&b);
                     } else {
-                        app.hex_view.highlihts.insert(b);
+                        app.hex_view.highlights.insert(b);
                     }
                 }
             } else if app.hex_view.offset > 0 {
