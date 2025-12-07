@@ -1,7 +1,4 @@
-use crate::{
-    app::App,
-    util::center_widget,
-};
+use crate::{app::App, util::center_widget};
 
 use ratatui::{
     Frame,

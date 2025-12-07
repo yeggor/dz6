@@ -9,11 +9,7 @@ use std::io::Result;
 
 use tui_input::backend::crossterm::EventHandler;
 
-use crate::{
-    app::{App},
-    commands::Commands,
-    editor::UIState,
-};
+use crate::{app::App, commands::Commands, editor::UIState};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Comment {

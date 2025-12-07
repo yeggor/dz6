@@ -6,15 +6,16 @@ use std::{
 };
 
 use arboard::Clipboard;
-use ratatui::{
-    Frame,
-    layout::Rect,
-    widgets::ListState,
-};
+use ratatui::{Frame, layout::Rect, widgets::ListState};
 use tui_input::Input;
 
 use crate::{
-    config::*, editor::*, global::calculator::Calculator, hex::{hex_view::HexView, strings::FoundString}, reader::Reader, themes::*
+    config::*,
+    editor::*,
+    global::calculator::Calculator,
+    hex::{hex_view::HexView, strings::FoundString},
+    reader::Reader,
+    themes::*,
 };
 
 #[derive(Default)]

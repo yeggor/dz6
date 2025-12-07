@@ -12,7 +12,9 @@ impl App {
         }
 
         let toml_string = toml::to_string_pretty(&self.hex_view)?;
-        let target_dir: &Path = Path::new(&self.file_info.path).parent().unwrap_or(Path::new("."));
+        let target_dir: &Path = Path::new(&self.file_info.path)
+            .parent()
+            .unwrap_or(Path::new("."));
         let cwd_db = format!("{}.dz6", self.file_info.name);
         let target_db: PathBuf = target_dir.join(&cwd_db);
 
@@ -22,7 +24,9 @@ impl App {
         Ok(())
     }
     pub fn load_database(&mut self) -> Result<(), Box<dyn Error>> {
-        let target_dir: &Path = Path::new(&self.file_info.path).parent().unwrap_or(Path::new("."));
+        let target_dir: &Path = Path::new(&self.file_info.path)
+            .parent()
+            .unwrap_or(Path::new("."));
         let cwd_db = format!("{}.dz6", self.file_info.name);
         let target_db: PathBuf = target_dir.join(&cwd_db);
         let data = fs::read_to_string(&cwd_db).or_else(|_| fs::read_to_string(&target_db))?;
