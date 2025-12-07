@@ -9,7 +9,7 @@ use crate::{app::App, config::APP_PAGE_SIZE, editor::UIState};
 // Left column with offsets
 pub fn draw_hex_offsets(app: &mut App, frame: &mut Frame, area: Rect) {
     // Offset lines
-    let mut rows: Vec<Row> = Vec::with_capacity(APP_PAGE_SIZE / 16);
+    let mut rows: Vec<Row> = Vec::with_capacity(APP_PAGE_SIZE / app.config.hex_mode_bytes_per_line);
     let mut ofs = app.reader.page_start;
     let num_offsets = app
         .reader
@@ -25,9 +25,7 @@ pub fn draw_hex_offsets(app: &mut App, frame: &mut Frame, area: Rect) {
         .offset_state
         .select(Some(app.hex_view.cursor.y));
 
-    let table = Table::new(rows, [Constraint::Length(12); 1])
-        .column_spacing(1)
-        .style(app.config.theme.offsets);
+    let table = Table::new(rows, [Constraint::Length(12); 1]).style(app.config.theme.offsets);
 
     frame.render_stateful_widget(table, area, &mut app.hex_view.offset_state);
 }
@@ -35,7 +33,7 @@ pub fn draw_hex_offsets(app: &mut App, frame: &mut Frame, area: Rect) {
 // Middle area with the actual hex dump
 // TODO: refactor this as I did for draw_hex_ascii()
 pub fn draw_hex_contents(app: &mut App, frame: &mut Frame, area: Rect) {
-    let mut rows: Vec<Row> = Vec::with_capacity(APP_PAGE_SIZE / 16);
+    let mut rows: Vec<Row> = Vec::with_capacity(APP_PAGE_SIZE / app.config.hex_mode_bytes_per_line);
     // A cell for each byte as they need different styles when edited
     let mut byte_row: Vec<Cell> = Vec::with_capacity(APP_PAGE_SIZE);
     let mut cell_hl_style = app.config.theme.highlight;
