@@ -27,6 +27,12 @@ You can install **dz6** with the Rust package manager. Follow the instructions [
 
     cargo install dz6
 
+## Package managers
+
+### FreeBSD
+
+    pkg install dz6
+
 Alternatively, download the [release](https://github.com/mentebinaria/dz6/releases) package for your system.
 
 ## Usage
