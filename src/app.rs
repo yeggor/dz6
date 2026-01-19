@@ -171,6 +171,7 @@ impl App {
 
         self.file_info.size = meta.len() as usize;
 
+        if self.file_info.size > 0 {
         self.id_file();
         self.log(format!(
             "filesize: {} (0x{:x})",
