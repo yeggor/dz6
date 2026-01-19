@@ -21,17 +21,24 @@ A vim-inspired, TUI-based hexadecimal editor
 
 ![Initial window](assets/dz_ss_initial.png)
 
-## Download
+## Installation
 
-You can install **dz6** with the Rust package manager. Follow the instructions [here](https://rust-lang.org/tools/install/) to install **cargo**. Then, use
+### Rust package manager (all operating systems)
+
+Follow the instructions [here](https://rust-lang.org/tools/install/) to install **cargo**. Then, open up
+a terminal and type:
 
     cargo install dz6
-
-## Package managers
 
 ### FreeBSD
 
     pkg install dz6
+
+### Windows
+
+If you have [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/), install dz6 with:
+
+    winget install mentebinaria.dz6
 
 Alternatively, download the [release](https://github.com/mentebinaria/dz6/releases) package for your system.
 
@@ -64,7 +71,7 @@ Once you load a file in **dz6**, you can use the commands below.
 
 | Command        | Action                                                           | Parameters             | Tips/Examples                                                                                     |
 | -------------- | ---------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------- |
-| `<number`      | Go to offset                                                     |                        | hex default; `t` suffix = decimal; `+` prefix = incremental jump                                  |
+| `<number>`     | Go to offset                                                     |                        | hex default; `t` suffix = decimal; `+` prefix = incremental jump                                  |
 | `cmt`          | Comment                                                          | `<offset>` `<comment>` | `cmt 1000 "my comment"` (offset obeys the same rules above)                                       |
 | `set byteline` | Set the number of bytes per line                                 | `<number>`             | `set byteline 8` (default is 16; range from 1 to 48)                                              |
 | `set ctrlchar` | Set the character shown in the ASCII dump for non-graphic values | `<char>`               | `set ctrlchar " "` would set a blankspace (default: `.`)                                          |
