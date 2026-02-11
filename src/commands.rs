@@ -218,6 +218,10 @@ pub fn command_events(app: &mut App, event: &Event) -> Result<bool> {
 }
 
 pub fn command_error_invalid_offset_draw(app: &mut App, frame: &mut Frame) {
+    if app.file_info.size == 0 {
+        return;
+    }
+
     let mut dialog = Message::from(&format!(
         "Invalid offset. Maximum offset for this file: {:X}",
         app.file_info.size - 1

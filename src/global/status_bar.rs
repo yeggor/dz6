@@ -38,16 +38,20 @@ pub fn status_bar_draw(app: &mut App, frame: &mut Frame, area: Rect) {
         _ => "",
     };
 
-    let fname = app.file_info.name.clone();
-    let percent = app.hex_view.offset as f64 / app.file_info.size as f64 * 100.0;
-    let percent = percent.round();
+    let filename = app.file_info.name.clone();
+    let percent = if app.file_info.size == 0 {
+        0.
+    } else {
+        (app.hex_view.offset as f64 / app.file_info.size as f64 * 100.0).round()
+    };
+
     let read_only = if app.file_info.is_read_only {
         "[RO]"
     } else {
         ""
     };
 
-    let top_bar_info_left = Paragraph::new(format!("{} {}", fname, read_only))
+    let top_bar_info_left = Paragraph::new(format!("{} {}", filename, read_only))
         .style(app.config.theme.topbar)
         .alignment(Alignment::Left);
     frame.render_widget(top_bar_info_left, area);
