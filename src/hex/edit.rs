@@ -84,6 +84,7 @@ pub fn edit_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                         app.hex_view
                             .changed_bytes
                             .insert(app.hex_view.offset, c.to_ascii_uppercase().to_string());
+                        app.hex_view.changed_history.push(app.hex_view.offset);
                     }
                 } else if c == 'z' {
                     // zero out bytes

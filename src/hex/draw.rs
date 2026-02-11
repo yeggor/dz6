@@ -85,6 +85,11 @@ pub fn draw_hex_contents(app: &mut App, frame: &mut Frame, area: Rect) {
             // typed chars in content instead of original ones
             byte_content = app.hex_view.changed_bytes[&offset].clone();
             byte_style = app.config.theme.changed_bytes;
+
+            // prepend a '0' while the user doesn't type the highest nibble
+            if  byte_content.len() == 1 {
+                byte_content.insert(0, '0');
+            }
         }
 
         // TODO: column size (2) keep the separator char from being shown :(
