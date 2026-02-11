@@ -172,7 +172,6 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
         KeyCode::Char('z') => {
             if !app.file_info.is_read_only && app.hex_view.offset < app.file_info.size {
                 app.state = UIState::HexEditing;
-                app.hex_view.changed_bytes.clear();
                 hex::edit::fill_with(app, 0x00, true);
             }
         }
@@ -184,7 +183,6 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 && key.modifiers.contains(KeyModifiers::CONTROL)
             {
                 app.state = UIState::HexEditing;
-                app.hex_view.changed_bytes.clear();
                 let ofs = app.hex_view.offset;
                 if let Some(s) = app.hex_view.changed_bytes.get(&ofs) {
                     if let Ok(b) = u8::from_str_radix(s, 16) {
@@ -203,7 +201,6 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 && key.modifiers.contains(KeyModifiers::CONTROL)
             {
                 app.state = UIState::HexEditing;
-                app.hex_view.changed_bytes.clear();
                 let ofs = app.hex_view.offset;
                 if let Some(s) = app.hex_view.changed_bytes.get(&ofs) {
                     if let Ok(b) = u8::from_str_radix(s, 16) {
@@ -220,7 +217,7 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             app.state = UIState::DialogHelp;
             app.dialog_renderer = Some(hex::help::dialog_help_draw);
         }
-        // reaplce
+        // replace
         KeyCode::Char('r') => {
             if app.file_info.is_read_only {
                 print!("\x07"); // beep
@@ -286,6 +283,14 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 app.state = UIState::HexSelection;
                 app.hex_view.selection.start = app.hex_view.offset;
                 app.hex_view.selection.end = app.hex_view.offset;
+            }
+        }
+        // undo
+        KeyCode::Char('u') => {
+            if let Some(ofs) = app.hex_view.changed_history.pop() {
+                let _ = app.hex_view.changed_bytes.remove(&ofs);
+            } else {
+                print!("\x07"); // beep if there's nothing to undo
             }
         }
         _ => {}
