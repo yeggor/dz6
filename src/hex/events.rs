@@ -220,7 +220,7 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
         // replace
         KeyCode::Char('r') => {
             if app.file_info.is_read_only {
-                print!("\x07"); // beep
+                crate::beep!();
             } else if app.hex_view.offset < app.file_info.size {
                 app.state = UIState::HexEditing;
             }
@@ -290,7 +290,7 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             if let Some(ofs) = app.hex_view.changed_history.pop() {
                 let _ = app.hex_view.changed_bytes.remove(&ofs);
             } else {
-                print!("\x07"); // beep if there's nothing to undo
+                crate::beep!(); // beep if there's nothing to undo
             }
         }
         _ => {}

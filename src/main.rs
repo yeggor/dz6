@@ -75,3 +75,10 @@ fn main() {
 
     ratatui::restore();
 }
+
+#[macro_export]
+macro_rules! beep {
+    () => {
+        print!("\x07")
+    };
+}

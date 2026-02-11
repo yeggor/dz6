@@ -51,6 +51,7 @@ pub fn search<T: AsRef<[u8]>>(app: &mut App, needle: T) -> Option<usize> {
         }
     }
 
+    crate::beep!();
     None
 }
 
