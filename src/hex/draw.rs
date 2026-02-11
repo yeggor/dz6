@@ -87,7 +87,7 @@ pub fn draw_hex_contents(app: &mut App, frame: &mut Frame, area: Rect) {
             byte_style = app.config.theme.changed_bytes;
 
             // prepend a '0' while the user doesn't type the highest nibble
-            if  byte_content.len() == 1 {
+            if byte_content.len() == 1 {
                 byte_content.insert(0, '0');
             }
         }
