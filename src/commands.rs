@@ -164,6 +164,15 @@ pub fn parse_command(app: &mut App, cmdline: &str) {
                     }
                     app.dialog_renderer = None;
                 }
+                // saarch wrap
+                "wrapscan" => {
+                    app.config.search_wrap = true;
+                    app.dialog_renderer = None;
+                }
+                "nowrapscan" => {
+                    app.config.search_wrap = false;
+                    app.dialog_renderer = None;
+                }
                 _ => {
                     app.dialog_renderer = None;
                 }

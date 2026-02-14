@@ -21,7 +21,7 @@ pub fn handle_global_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             app.dialog_renderer = Some(commands::command_draw);
         }
         // calculator
-        KeyCode::Char('?') => {
+        KeyCode::Char('=') => {
             app.state = UIState::DialogCalculator;
             app.dialog_renderer = Some(global::calculator::dialog_calculator_draw);
         }

@@ -1,5 +1,6 @@
 use crate::{app::App, commands::Commands, editor::UIState, hex};
 
+use crate::hex::selection::SearchDirection;
 use ratatui::crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use std::io::Result;
 
@@ -18,12 +19,36 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 break;
             }
             ofs = ofs.saturating_add_signed(delta);
-            // this is needed because it can start at 0
-            // but it cannot be zero afterwards
+            // this is needed because it can start at 0,
+            // but it cannot be zero afterward
             // without it, `O` doesn't work at offset 0
             if ofs == 0 {
                 app.goto(0);
                 break;
+            }
+        }
+    }
+
+    fn search_next(app: &mut App) {
+        let mut ofs = None;
+
+        if app.state == UIState::Normal {
+            if app.hex_view.search.mode == hex::search::SearchMode::Utf8
+                && !app.hex_view.search.input_text.value().is_empty()
+            {
+                ofs = hex::search::search(app, app.hex_view.search.input_text.value().to_string())
+            } else if app.hex_view.search.mode == hex::search::SearchMode::Hex
+                && !app.hex_view.search.input_hex.value().is_empty()
+            {
+                let hex_string = app.hex_view.search.input_hex.value().to_string();
+
+                if let Some(by) = hex::search::hex_string_to_u8(&hex_string) {
+                    ofs = hex::search::search(app, &by)
+                }
+            }
+
+            if let Some(ofs) = ofs {
+                app.goto(ofs);
             }
         }
     }
@@ -232,9 +257,16 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
         // search
         KeyCode::Char('/') => {
             app.state = UIState::DialogSearch;
+            app.hex_view.search.direction = SearchDirection::Forward;
             app.dialog_renderer = Some(hex::search::dialog_search_draw);
         }
-        // names and search next
+        // search backwards
+        KeyCode::Char('?') => {
+            app.state = UIState::DialogSearch;
+            app.hex_view.search.direction = SearchDirection::Backward;
+            app.dialog_renderer = Some(hex::search::dialog_search_draw);
+        }
+        // names and search next (forward)
         KeyCode::Char('n') => {
             // names
             if key.modifiers.contains(KeyModifiers::ALT) {
@@ -244,31 +276,15 @@ pub fn hex_mode_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                     app.hex_view.names_list_state.select_first();
                 }
             } else {
-                // search next
-                let mut ofs = None;
-                if app.state == UIState::Normal {
-                    if app.hex_view.search.mode == hex::search::SearchMode::Utf8
-                        && !app.hex_view.search.input_text.value().is_empty()
-                    {
-                        ofs = crate::hex::search::search(
-                            app,
-                            &app.hex_view.search.input_text.value().to_string(),
-                        )
-                    } else if app.hex_view.search.mode == hex::search::SearchMode::Hex
-                        && !app.hex_view.search.input_hex.value().is_empty()
-                    {
-                        let hex_string = app.hex_view.search.input_hex.value().to_string();
-
-                        if let Some(by) = hex::search::hex_string_to_u8(&hex_string) {
-                            ofs = crate::hex::search::search(app, &by)
-                        }
-                    }
-
-                    if let Some(ofs) = ofs {
-                        app.goto(ofs);
-                    }
-                }
+                // search next (forward)
+                app.hex_view.search.direction = SearchDirection::Forward;
+                search_next(app);
             }
+        }
+        // search next (backward)
+        KeyCode::Char('N') => {
+            app.hex_view.search.direction = SearchDirection::Backward;
+            search_next(app);
         }
         // comment
         KeyCode::Char(';') => {
