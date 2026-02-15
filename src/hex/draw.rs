@@ -84,7 +84,10 @@ pub fn draw_hex_contents(app: &mut App, frame: &mut Frame, area: Rect) {
         if app.hex_view.changed_bytes.contains_key(&offset) {
             // typed chars in content instead of original ones
             byte_content = app.hex_view.changed_bytes[&offset].clone();
-            byte_style = app.config.theme.changed_bytes;
+
+            if !app.hex_view.selection.contains(offset) {
+                byte_style = app.config.theme.changed_bytes;
+            }
 
             // prepend a '0' while the user doesn't type the highest nibble
             if byte_content.len() == 1 {
@@ -183,8 +186,12 @@ pub fn draw_hex_ascii(app: &mut App, frame: &mut Frame, area: Rect) {
         // o offset atual está no hashmap de bytes alterados
         let offset = i + app.reader.page_start;
         let cell = if app.hex_view.changed_bytes.contains_key(&offset) {
-            // Define o estilo
-            char_style = app.config.theme.changed_bytes;
+            // Set regular highlight style if selection is happening
+            char_style = if app.hex_view.selection.contains(offset) {
+                app.config.theme.highlight
+            } else {
+                app.config.theme.changed_bytes
+            };
             // Recupera o byte alterado (como hex string)
             let s = &app.hex_view.changed_bytes[&offset];
 
