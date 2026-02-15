@@ -88,7 +88,9 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 return Ok(true);
             }
 
-            app.hex_view.selection.select_right_or_down(app.file_info.size, 1);
+            app.hex_view
+                .selection
+                .select_right_or_down(app.file_info.size, 1);
             app.goto(new_offset);
         }
         KeyCode::Up | KeyCode::Char('k') => {
@@ -97,7 +99,9 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 .offset
                 .saturating_sub(app.config.hex_mode_bytes_per_line);
 
-            if app.hex_view.selection.direction == Some(Direction::RightOrDown) && new_offset < app.hex_view.selection.start {
+            if app.hex_view.selection.direction == Some(Direction::RightOrDown)
+                && new_offset < app.hex_view.selection.start
+            {
                 return Ok(true);
             }
 
@@ -113,7 +117,9 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 .saturating_add(app.config.hex_mode_bytes_per_line)
                 .min(app.file_info.size - 1);
 
-            if app.hex_view.selection.direction == Some(Direction::LeftOrUp) && new_offset > app.hex_view.selection.end {
+            if app.hex_view.selection.direction == Some(Direction::LeftOrUp)
+                && new_offset > app.hex_view.selection.end
+            {
                 return Ok(true);
             }
 
