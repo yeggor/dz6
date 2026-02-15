@@ -24,7 +24,7 @@ pub fn handle_events(app: &mut App) -> Result<bool> {
     match event {
         Event::Key(key) if key.kind == KeyEventKind::Press => {
             match app.state {
-                UIState::Normal => {
+                UIState::Normal | UIState::Error => {
                     global::events::handle_global_events(app, key)?;
                     match app.editor_view {
                         AppView::Hex => hex::events::hex_mode_events(app, key)?,

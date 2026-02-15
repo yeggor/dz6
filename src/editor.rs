@@ -15,10 +15,10 @@ impl AppView {
 
 #[derive(PartialEq)]
 pub enum UIState {
+    Command,
     DialogCalculator,
     DialogComment,
     DialogEncoding,
-    Command,
     DialogHelp,
     DialogLog,
     DialogNames,
@@ -26,6 +26,7 @@ pub enum UIState {
     DialogSearch,
     DialogStrings,
     DialogStringsRegex,
+    Error,
     HexEditing,
     HexSelection,
     Normal,

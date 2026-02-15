@@ -53,6 +53,11 @@ pub struct TextView {
     pub table: &'static encoding_rs::Encoding,
 }
 
+pub struct Dz6Error {
+    // pub code: u16,
+    pub message: String,
+}
+
 pub struct App {
     pub calculator: Calculator,
     pub clipboard: Result<Clipboard, arboard::Error>,
@@ -74,6 +79,7 @@ pub struct App {
     pub string_regex: String,
     pub strings: Vec<FoundString>,
     pub text_view: TextView,
+    pub last_error: Dz6Error,
 }
 
 impl App {
@@ -120,6 +126,9 @@ impl App {
                 lines_to_show: 0,
                 scroll_offset: (0, 0),
                 table: encoding_rs::UTF_8,
+            },
+            last_error: Dz6Error {
+                message: "Success".to_string(),
             },
         }
     }

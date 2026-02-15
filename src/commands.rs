@@ -6,6 +6,7 @@ use ratatui::{
 
 use crate::{editor::UIState, widgets::Message};
 
+use crate::app::Dz6Error;
 use clap::{Parser, Subcommand};
 use ratatui::crossterm::event::{Event, KeyCode};
 use std::io::Result;
@@ -70,10 +71,20 @@ fn try_goto(app: &mut App, offset: &str) {
             app.state = UIState::Normal;
             app.goto(ofs);
         } else {
-            app.dialog_renderer = Some(command_error_invalid_offset_draw);
+            app.last_error = Dz6Error {
+                message: format!(
+                    "Invalid range: {}; maximum offset for this file is {}",
+                    offset,
+                    app.file_info.size.saturating_sub(1)
+                ),
+            };
+            app.dialog_renderer = Some(command_error_draw);
         }
     } else {
-        app.dialog_renderer = Some(command_error_invalid_draw);
+        app.last_error = Dz6Error {
+            message: format!("Not an editor command: {}", offset),
+        };
+        app.dialog_renderer = Some(command_error_draw);
     }
 }
 
@@ -124,10 +135,20 @@ pub fn parse_command(app: &mut App, cmdline: &str) {
                         Commands::comment(app, ofs, comment);
                         app.dialog_renderer = None;
                     } else {
-                        app.dialog_renderer = Some(command_error_invalid_offset_draw);
+                        app.last_error = Dz6Error {
+                            message: format!(
+                                "Invalid range: {}; maximum offset for this file is {}",
+                                cmdline,
+                                app.file_info.size.saturating_sub(1)
+                            ),
+                        };
+                        app.dialog_renderer = Some(command_error_draw);
                     }
                 } else {
-                    app.dialog_renderer = Some(command_error_invalid_draw);
+                    app.last_error = Dz6Error {
+                        message: format!("Invalid argument: {}", offset),
+                    };
+                    app.dialog_renderer = Some(command_error_draw);
                 }
                 app.state = UIState::Normal;
             }
@@ -197,12 +218,22 @@ pub fn parse_command(app: &mut App, cmdline: &str) {
                     "theme" => {
                         if let Some(val) = value {
                             match val.as_str() {
-                                "dark" => app.config.theme = crate::themes::DARK,
-                                "light" => app.config.theme = crate::themes::LIGHT,
-                                _ => (),
+                                "dark" => {
+                                    app.config.theme = crate::themes::DARK;
+                                    app.dialog_renderer = None;
+                                }
+                                "light" => {
+                                    app.config.theme = crate::themes::LIGHT;
+                                    app.dialog_renderer = None;
+                                }
+                                _ => {
+                                    app.last_error = Dz6Error {
+                                        message: format!("Invalid theme: {}", val),
+                                    };
+                                    app.dialog_renderer = Some(command_error_draw);
+                                }
                             }
                         }
-                        app.dialog_renderer = None;
                     }
                     // saarch wrap
                     "wrapscan" => {
@@ -279,21 +310,9 @@ pub fn command_events(app: &mut App, event: &Event) -> Result<bool> {
     Ok(false)
 }
 
-pub fn command_error_invalid_offset_draw(app: &mut App, frame: &mut Frame) {
-    if app.file_info.size == 0 {
-        return;
-    }
-
-    let mut dialog = Message::from(&format!(
-        "Invalid offset. Maximum offset for this file: {:X}",
-        app.file_info.size - 1
-    ));
+pub fn command_error_draw(app: &mut App, frame: &mut Frame) {
+    let mut dialog = Message::from(&app.last_error.message);
     dialog.kind = MessageType::Error;
     dialog.render(app, frame);
-}
-
-pub fn command_error_invalid_draw(app: &mut App, frame: &mut Frame) {
-    let mut dialog = Message::from("Invalid command");
-    dialog.kind = MessageType::Error;
-    dialog.render(app, frame);
+    app.state = UIState::Error;
 }
