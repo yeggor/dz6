@@ -35,34 +35,31 @@ impl Selection {
         self.end = 0;
         self.direction = None;
     }
-    pub fn select_left(&mut self, offset: usize) {
-        // unset direction if at the selection origin
-        if self.start == self.end {
-            self.direction = None;
-        }
-
+    pub fn select_left(&mut self, step: usize) {
         match self.direction {
             None => {
                 self.direction = Some(Direction::Left);
-                self.start = offset;
+                self.start = self.start.saturating_sub(step);
             }
-            Some(Direction::Left) => self.start = offset,
-            Some(Direction::Right) => self.end = offset.saturating_sub(1),
-        }
-    }
-    pub fn select_right(&mut self, offset: usize) {
-        // unset direction if at the selection origin
-        if self.start == self.end {
-            self.direction = None;
+            Some(Direction::Left) => self.start = self.start.saturating_sub(step),
+            Some(Direction::Right) => self.end = self.end.saturating_sub(step),
         }
 
+        if self.start == self.end {
+            self.direction = Some(Direction::Left);
+        }
+    }
+    pub fn select_right(&mut self, offset_max: usize, step: usize) {
         match self.direction {
             None => {
                 self.direction = Some(Direction::Right);
-                self.end = offset;
+                self.end = (self.start + step).min(offset_max);
             }
-            Some(Direction::Left) => self.start = offset + 1,
-            Some(Direction::Right) => self.end = offset,
+            Some(Direction::Left) => self.start = (self.start + step).min(offset_max),
+            Some(Direction::Right) => self.end = (self.end + step).min(offset_max),
+        }
+        if self.start == self.end {
+            self.direction = Some(Direction::Right);
         }
     }
 }
@@ -80,7 +77,7 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
         KeyCode::Left | KeyCode::Char('h') => {
             let new_offset = app.hex_view.offset.saturating_sub(1);
 
-            app.hex_view.selection.select_left(new_offset);
+            app.hex_view.selection.select_left(1);
             app.goto(new_offset);
         }
         KeyCode::Right | KeyCode::Char('l') => {
@@ -91,7 +88,7 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 return Ok(true);
             }
 
-            app.hex_view.selection.select_right(new_offset);
+            app.hex_view.selection.select_right(app.file_info.size, 1);
             app.goto(new_offset);
         }
         KeyCode::Up | KeyCode::Char('k') => {
@@ -105,7 +102,9 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 return Ok(true);
             }
 
-            app.hex_view.selection.select_left(new_offset);
+            app.hex_view
+                .selection
+                .select_left(app.config.hex_mode_bytes_per_line);
             app.goto(new_offset);
         }
         KeyCode::Down | KeyCode::Char('j') => {
@@ -115,7 +114,9 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 .saturating_add(app.config.hex_mode_bytes_per_line)
                 .min(app.file_info.size - 1);
 
-            app.hex_view.selection.select_right(new_offset);
+            app.hex_view
+                .selection
+                .select_right(app.file_info.size, app.config.hex_mode_bytes_per_line);
             app.goto(new_offset);
         }
 
