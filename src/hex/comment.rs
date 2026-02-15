@@ -78,7 +78,9 @@ pub fn dialog_comment_events(app: &mut App, event: &Event) -> Result<bool> {
 
 pub fn comment_show_draw(app: &mut App, frame: &mut Frame) {
     // check if the current offset has a comment to be shown
-    if let Some(cmt) = app.hex_view.comments.get(&app.hex_view.offset) {
+    if let Some(cmt) = app.hex_view.comments.get(&app.hex_view.offset)
+        && app.state == UIState::Normal
+    {
         // format comment
         let para = Paragraph::new(format!(";{}", cmt)).style(app.config.theme.main);
 
