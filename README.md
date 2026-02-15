@@ -61,18 +61,19 @@ Once you load a file in **dz6**, you can use the commands below.
 
 ### Global key bindings
 
-| Key     | Action           | Tips                      |
-|---------|------------------|---------------------------|
-| `Enter` | Switch views     | Currently Hex and Text    |
-| `Alt+l` | Open log window  |                           |
-| `:`     | Open command bar | See [Commands](#commands) |
+| Key     | Action                         | Tips                      |
+|---------|--------------------------------|---------------------------|
+| `Enter` | Switch views                   | Currently Hex and Text    |
+| `Alt+l` | Open log window                |                           |
+| `:`     | Open command bar               | See [Commands](#commands) |
 
 #### Commands
 
 | Command          | Action                                                           | Parameters             | Tips/Examples                                                                                     |
 |------------------|------------------------------------------------------------------|------------------------|---------------------------------------------------------------------------------------------------|
-| `<number>`       | Go to offset                                                     |                        | hex default; `t` suffix = decimal; `+` prefix = incremental jump                                  |
-| `cmt`            | Comment                                                          | `<offset>` `<comment>` | `cmt 1000 "my comment"` (offset obeys the same rules above)                                       |
+| `<number>`       | Go to offset                                                     |                        | hex default; `t` suffix = decimal; `+` prefix = incremental jump; `-` prefix = decremental jump   |
+| `cmt`            | Add `<comment>` to `<offset>`                                    | `<offset>` `<comment>` | `cmt 1000 "my comment"` (comment at offset 0x1000; offset obeys the same rules above)             |
+| `sel`            | Select `<length>` bytes from `<offset>`                          | `<offset>` `<length>`  | `sel 40 10t` (select 10 bytes from offset 0x40)                                                   |
 | `set byteline`   | Set the number of bytes per line                                 | `<number> or `auto`    | `set byteline 8` (default is 16; `auto` enables automatic setting based on screen width)          |
 | `set ctrlchar`   | Set the character shown in the ASCII dump for non-graphic values | `<char>`               | `set ctrlchar " "` would set a blankspace (default: `.`)                                          |
 | `set db`         | Turn on database file saving/loading (default)                   |                        | A database file with a `.dz6` extension will be used to store bookmarks and comments for the file |
@@ -107,11 +108,12 @@ If you need permanent settings, create a `$HOME/.dz6init` file containing any of
 | `Ctrl+a`                | Enter replace mode and increment byte under the cursor                             |                                                                   |
 | `Ctrl+x`                | Enter replace mode and decrement byte under the cursor                             |                                                                   |
 | `v`                     | Enter [select mode](#hex-selection-mode)                                           |                                                                   |
-| `u`                     | Undo a change                                                                      |                                                                   |
+| `u`                     | Undo the last change made to the buffer                                            | Use it *before* writing to the file (`:w`)                        |
 | `/`                     | Search (forward)                                                                   | Search the entire file. `Tab` cycles between ASCII and hex search |
 | `n`                     | Search next (forward)                                                              |                                                                   |
 | `?`                     | Search (backward)                                                                  | Search the entire file. `Tab` cycles between ASCII and hex search |
-| `N`                     | Search next (backward)                                                             |                                                                   || `s`                     | Open [Strings](#strings) window                                                    |                                                                   |
+| `N`                     | Search next (backward)                                                             |                                                                   |
+| `s`                     | Open [Strings](#strings) window                                                    |                                                                   |
 | `Backspace`             | Go to the previously visited offset                                                | This is useful after a Go to command, for example                 |
 | `+`                     | Add current offset to bookmarks                                                    |                                                                   |
 | `-`                     | Go to the last added bookmark                                                      |                                                                   |

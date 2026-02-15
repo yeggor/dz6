@@ -27,6 +27,10 @@ enum Command {
         option: String,
         value: Option<String>,
     },
+    Sel {
+        start: String,
+        length: String,
+    },
 }
 
 #[derive(Parser, Debug)]
@@ -34,11 +38,32 @@ struct CommandLine {
     #[clap(subcommand)]
     command: Option<Command>,
 }
+#[derive(Debug, PartialEq)]
+enum OffsetType {
+    Backward,
+    Absolute,
+    Forward,
+}
 
 fn try_goto(app: &mut App, offset: &str) {
-    if let Ok(mut ofs) = parse_offset(offset) {
-        if offset.starts_with('+') {
-            ofs += app.hex_view.offset;
+    let offset_direction;
+    let mut new_offset = offset;
+
+    if offset.starts_with('-') {
+        offset_direction = OffsetType::Backward;
+        new_offset = &offset[1..];
+    } else if offset.starts_with('+') {
+        offset_direction = OffsetType::Forward;
+        new_offset = &offset[1..];
+    } else {
+        offset_direction = OffsetType::Absolute;
+    }
+
+    if let Ok(mut ofs) = parse_offset(&new_offset) {
+        if offset_direction == OffsetType::Forward {
+            ofs = app.hex_view.offset.saturating_add(ofs);
+        } else if offset_direction == OffsetType::Backward {
+            ofs = app.hex_view.offset.saturating_sub(ofs);
         }
         if ofs < app.file_info.size {
             app.dialog_renderer = None;
@@ -78,6 +103,7 @@ pub fn parse_command(app: &mut App, cmdline: &str) {
                     let _ = app.save_database();
                 }
                 app.dialog_renderer = None;
+                app.state = UIState::Normal;
             }
             // write and quit
             Some(Command::Wq) | Some(Command::X) => {
@@ -106,90 +132,105 @@ pub fn parse_command(app: &mut App, cmdline: &str) {
                 app.state = UIState::Normal;
             }
             // set
-            Some(Command::Set { option, value }) => match option.as_str() {
-                // bytes per line
-                "byteline" => {
-                    if let Some(val) = value {
-                        if let Ok(bpl) = val.parse::<usize>() {
-                            // Bound user typed value by `max` - 1
-                            if app.screen.width > 0 {
-                                let max = ((app.screen.width - 9) / 4) as usize;
-                                app.config.hex_mode_bytes_per_line = bpl.min(max - 1);
-                            } else {
-                                app.config.hex_mode_bytes_per_line = bpl.min(64);
+            Some(Command::Set { option, value }) => {
+                match option.as_str() {
+                    // bytes per line
+                    "byteline" => {
+                        if let Some(val) = value {
+                            if let Ok(bpl) = val.parse::<usize>() {
+                                // Bound user typed value by `max` - 1
+                                if app.screen.width > 0 {
+                                    let max = ((app.screen.width - 9) / 4) as usize;
+                                    app.config.hex_mode_bytes_per_line = bpl.min(max - 1);
+                                } else {
+                                    app.config.hex_mode_bytes_per_line = bpl.min(64);
+                                }
+                                app.config.hex_mode_bytes_per_line_auto = false;
+                            } else if let Ok(bpl) = val.parse::<String>()
+                                && bpl == "auto"
+                            {
+                                app.config.hex_mode_bytes_per_line_auto = true;
+                                if app.screen.width > 0 {
+                                    let max = ((app.screen.width - 9) / 4) as usize;
+                                    app.config.hex_mode_bytes_per_line = max - 1;
+                                }
                             }
-                            app.config.hex_mode_bytes_per_line_auto = false;
-                        } else if let Ok(bpl) = val.parse::<String>()
-                            && bpl == "auto"
+                        }
+                        app.dialog_renderer = None;
+                    }
+                    // control / non-graphic bytes
+                    "ctrlchar" => {
+                        if let Some(val) = value
+                            && val.len() == 1
                         {
-                            app.config.hex_mode_bytes_per_line_auto = true;
-                            if app.screen.width > 0 {
-                                let max = ((app.screen.width - 9) / 4) as usize;
-                                app.config.hex_mode_bytes_per_line = max - 1;
+                            let c = val.chars().next().unwrap_or('.');
+                            app.config.hex_mode_non_graphic_char = c;
+                        }
+                        app.dialog_renderer = None;
+                    }
+                    // save database files <filename>.dz6
+                    "db" => {
+                        app.config.database = true;
+                        app.dialog_renderer = None;
+                    }
+                    "nodb" => {
+                        app.config.database = false;
+                        app.dialog_renderer = None;
+                    }
+                    // dim (gray out) control bytes
+                    "dimctrl" => {
+                        app.config.dim_control_chars = true;
+                        app.dialog_renderer = None;
+                    }
+                    // dim null bytes only
+                    "dimzero" => {
+                        app.config.dim_control_chars = false;
+                        app.config.dim_zeroes = true;
+                        app.dialog_renderer = None;
+                    }
+                    "nodim" => {
+                        app.config.dim_control_chars = false;
+                        app.config.dim_zeroes = false;
+                        app.dialog_renderer = None;
+                    }
+                    // theme
+                    "theme" => {
+                        if let Some(val) = value {
+                            match val.as_str() {
+                                "dark" => app.config.theme = crate::themes::DARK,
+                                "light" => app.config.theme = crate::themes::LIGHT,
+                                _ => (),
                             }
                         }
+                        app.dialog_renderer = None;
                     }
-                    app.dialog_renderer = None;
-                }
-                // control / non-graphic bytes
-                "ctrlchar" => {
-                    if let Some(val) = value
-                        && val.len() == 1
-                    {
-                        let c = val.chars().next().unwrap_or('.');
-                        app.config.hex_mode_non_graphic_char = c;
+                    // saarch wrap
+                    "wrapscan" => {
+                        app.config.search_wrap = true;
+                        app.dialog_renderer = None;
                     }
-                    app.dialog_renderer = None;
-                }
-                // save database files <filename>.dz6
-                "db" => {
-                    app.config.database = true;
-                    app.dialog_renderer = None;
-                }
-                "nodb" => {
-                    app.config.database = false;
-                    app.dialog_renderer = None;
-                }
-                // dim (gray out) control bytes
-                "dimctrl" => {
-                    app.config.dim_control_chars = true;
-                    app.dialog_renderer = None;
-                }
-                // dim null bytes only
-                "dimzero" => {
-                    app.config.dim_control_chars = false;
-                    app.config.dim_zeroes = true;
-                    app.dialog_renderer = None;
-                }
-                "nodim" => {
-                    app.config.dim_control_chars = false;
-                    app.config.dim_zeroes = false;
-                    app.dialog_renderer = None;
-                }
-                // theme
-                "theme" => {
-                    if let Some(val) = value {
-                        match val.as_str() {
-                            "dark" => app.config.theme = crate::themes::DARK,
-                            "light" => app.config.theme = crate::themes::LIGHT,
-                            _ => (),
-                        }
+                    "nowrapscan" => {
+                        app.config.search_wrap = false;
+                        app.dialog_renderer = None;
                     }
-                    app.dialog_renderer = None;
+                    _ => {
+                        app.dialog_renderer = None;
+                    }
                 }
-                // saarch wrap
-                "wrapscan" => {
-                    app.config.search_wrap = true;
-                    app.dialog_renderer = None;
+                app.state = UIState::Normal;
+            }
+            Some(Command::Sel { start, length }) => {
+                app.state = UIState::HexSelection;
+                app.dialog_renderer = None;
+
+                if let Ok(st) = parse_offset(&start)
+                    && let Ok(len) = parse_offset(&length)
+                {
+                    app.hex_view.selection.start = st;
+                    app.hex_view.selection.end = st.saturating_add(len);
+                    app.goto(st);
                 }
-                "nowrapscan" => {
-                    app.config.search_wrap = false;
-                    app.dialog_renderer = None;
-                }
-                _ => {
-                    app.dialog_renderer = None;
-                }
-            },
+            }
             None => {
                 try_goto(app, cmdline);
             }
@@ -199,7 +240,6 @@ pub fn parse_command(app: &mut App, cmdline: &str) {
             try_goto(app, cmdline);
         }
     }
-    app.state = UIState::Normal;
 }
 
 // command bar
