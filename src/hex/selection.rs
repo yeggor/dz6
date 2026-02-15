@@ -134,6 +134,7 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             let s = format!("{:02X}", 0x00);
             for offset in app.hex_view.selection {
                 app.hex_view.changed_bytes.insert(offset, s.clone());
+                app.hex_view.changed_history.push(offset);
             }
             app.hex_view.selection.clear();
         }
@@ -147,6 +148,7 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
             let s = format!("{:02X}", 0x90);
             for offset in app.hex_view.selection {
                 app.hex_view.changed_bytes.insert(offset, s.clone());
+                app.hex_view.changed_history.push(offset);
             }
             app.hex_view.selection.clear();
         }
