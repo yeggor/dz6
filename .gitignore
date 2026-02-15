@@ -25,3 +25,6 @@ target
 
 # dz6 database files
 *.dz6
+
+# RustRover stuff
+.idea
