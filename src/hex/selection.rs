@@ -46,7 +46,7 @@ impl Selection {
         }
 
         if self.start == self.end {
-            self.direction = Some(Direction::Left);
+            self.direction = None;
         }
     }
     pub fn select_right(&mut self, offset_max: usize, step: usize) {
@@ -59,7 +59,7 @@ impl Selection {
             Some(Direction::Right) => self.end = (self.end + step).min(offset_max),
         }
         if self.start == self.end {
-            self.direction = Some(Direction::Right);
+            self.direction = None;
         }
     }
 }
@@ -96,11 +96,6 @@ pub fn select_events(app: &mut App, key: KeyEvent) -> Result<bool> {
                 .hex_view
                 .offset
                 .saturating_sub(app.config.hex_mode_bytes_per_line);
-
-            // return if at the first offset
-            if new_offset == 0 {
-                return Ok(true);
-            }
 
             app.hex_view
                 .selection
