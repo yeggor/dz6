@@ -9,7 +9,8 @@ use crate::app::App;
 // FIXME: Show the entire file contents in text view. Currently,
 // it only shows up to APP_CACHE_SIZE bytes from the file.
 pub fn text_contents_draw(app: &mut App, frame: &mut Frame, area: Rect) {
-    let limit = ((area.height * area.width) as usize).min(app.file_info.size);
+    let limit = ((area.height * area.width) as usize)
+        .min(app.file_info.size.saturating_sub(app.reader.page_start));
     let buffer = app.file_info.get_buffer();
     let (mut text, _, had_error) = app
         .text_view
